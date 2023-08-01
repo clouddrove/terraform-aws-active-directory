@@ -15,18 +15,15 @@ github_repo: clouddrove/terraform-aws-active-directory
 
 # Badges to display
 badges:
-  - name: "Terraform"
-    image: "https://img.shields.io/badge/Terraform-v1.1.7-green"
-    url: "https://www.terraform.io"
-  - name: "Licence"
-    image: "https://img.shields.io/badge/License-APACHE-blue.svg"
-    url: "LICENSE.md"
+  - name: "Latest Release"
+    image: "https://img.shields.io/github/release/clouddrove/terraform-aws-active-directory.svg"
+    url: "https://github.com/clouddrove/terraform-aws-active-directory/releases/latest"
   - name: "tfsec"
     image: "https://github.com/clouddrove/terraform-aws-active-directory/actions/workflows/tfsec.yml/badge.svg"
     url: "https://github.com/clouddrove/terraform-aws-active-directory/actions/workflows/tfsec.yml"
-  - name: "static-checks"
-    image: "https://github.com/clouddrove/terraform-aws-active-directory/actions/workflows/terraform.yml/badge.svg"
-    url: "https://github.com/clouddrove/terraform-aws-active-directory/actions/workflows/terraform.yml"
+  - name: "Licence"
+    image: "https://img.shields.io/badge/License-APACHE-blue.svg"
+    url: "LICENSE.md"
 
 #  description of this project
 description: |-
@@ -36,13 +33,14 @@ include:
   - "terraform.md"
 
 # How to use this project
+# How to use this project
 usage : |-
   ### Simple Example
   Here is an example of how you can use this module in your inventory structure:
   ```hcl
       module "ad" {
       source       = "clouddrove/active-directory/aws"
-      versions     = "1.0.0"
+      versions     = "1.3.0"
       name         = "adclouddrove"
       label_order  = ["name", "environment"]
       subnet_ids   = module.subnets.public_subnet_id

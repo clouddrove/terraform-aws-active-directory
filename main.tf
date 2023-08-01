@@ -19,11 +19,11 @@ module "labels" {
 resource "aws_workspaces_directory" "main" {
   count = var.enabled ? 1 : 0
 
-  directory_id = join("", aws_directory_service_directory.main.*.id)
+  directory_id = join("", aws_directory_service_directory.main[*].id)
   subnet_ids   = var.subnet_ids
 
   ip_group_ids = [
-    join("", aws_workspaces_ip_group.ipgroup.*.id),
+    join("", aws_workspaces_ip_group.ipgroup[*].id),
   ]
 
   tags = module.labels.tags
@@ -123,19 +123,19 @@ resource "aws_iam_role" "workspaces_default" {
 ##-----------------------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "workspaces_default_service_access" {
   count      = var.enabled ? 1 : 0
-  role       = join("", aws_iam_role.workspaces_default.*.name)
+  role       = join("", aws_iam_role.workspaces_default[*].name)
   policy_arn = "arn:aws:iam::aws:policy/AmazonWorkSpacesServiceAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "workspaces_default_self_service_access" {
   count      = var.enabled ? 1 : 0
-  role       = join("", aws_iam_role.workspaces_default.*.name)
+  role       = join("", aws_iam_role.workspaces_default[*].name)
   policy_arn = "arn:aws:iam::aws:policy/AmazonWorkSpacesSelfServiceAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "workspaces_custom_s3_access" {
   count      = var.enabled && var.custom_policy != "" ? 1 : 0
-  role       = join("", aws_iam_role.workspaces_default.*.name)
+  role       = join("", aws_iam_role.workspaces_default[*].name)
   policy_arn = var.custom_policy
 }
 
