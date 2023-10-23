@@ -2,9 +2,14 @@
 ## Provider block added, Use the Amazon Web Services (AWS) provider to interact with the many resources supported by AWS.
 ##--------------------------------------------------------------------------------------------------------------------------
 provider "aws" {
-  region = "eu-west-1"
+  region = local.region
 }
 
+locals {
+  region      = "eu-west-1"
+  name        = "ad"
+  environment = "test"
+}
 #----------------------------------------------------------------------------------
 ## A VPC is a virtual network that closely resembles a traditional network that you'd operate in your own data center.
 ##----------------------------------------------------------------------------------
@@ -12,22 +17,20 @@ module "vpc" {
   source  = "clouddrove/vpc/aws"
   version = "2.0.0"
 
-  name        = "vpc"
-  environment = "test"
-  label_order = ["name", "environment"]
-
-  cidr_block = "10.0.0.0/16"
+  name        = "${local.name}-vpc"
+  environment = local.environment
+  cidr_block  = "10.0.0.0/16"
 }
 
 ##-----------------------------------------------------
 ## A subnet is a range of IP addresses in your VPC.
 ##-----------------------------------------------------
 module "subnets" {
-  source             = "clouddrove/subnet/aws"
-  version            = "2.0.0"
-  name               = "subnets"
-  environment        = "test"
-  label_order        = ["name", "environment"]
+  source  = "clouddrove/subnet/aws"
+  version = "2.0.0"
+
+  name               = "${local.name}-subnets"
+  environment        = local.environment
   availability_zones = ["eu-west-1a", "eu-west-1b"]
   vpc_id             = module.vpc.vpc_id
   type               = "public"
@@ -40,10 +43,10 @@ module "subnets" {
 ## active-directory module call.
 ##-----------------------------------------------------------------------------
 module "ad" {
-  source       = "./../"
-  environment  = "test"
-  name         = "adclouddrove"
-  label_order  = ["name", "environment"]
+  source = "./../"
+
+  name         = local.name
+  environment  = local.environment
   subnet_ids   = module.subnets.public_subnet_id
   vpc_settings = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
   ad_name      = "clouddrovepoc.example.com"
