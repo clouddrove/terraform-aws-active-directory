@@ -209,7 +209,7 @@ variable "description" {
 }
 
 variable "short_name" {
-  default     = ""
+  default     = "CORP"
   type        = string
   description = "The short name of the directory, such as CORP."
 }
