@@ -203,7 +203,7 @@ variable "alias" {
 }
 
 variable "description" {
-  default     = ""
+  default     = "The Active Directory Service"
   type        = string
   description = "A textual description for the directory."
 }
@@ -215,7 +215,7 @@ variable "short_name" {
 }
 
 variable "edition" {
-  default     = "Enterprise"
+  default     = "Standard"
   type        = string
   description = "The MicrosoftAD edition (Standard or Enterprise)."
 }
