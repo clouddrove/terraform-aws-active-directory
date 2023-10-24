@@ -215,7 +215,7 @@ variable "short_name" {
 }
 
 variable "edition" {
-  default     = "Standard"
+  default     = "Enterprise"
   type        = string
   description = "The MicrosoftAD edition (Standard or Enterprise)."
 }
