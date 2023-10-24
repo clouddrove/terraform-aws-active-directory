@@ -50,6 +50,6 @@ module "ad" {
   subnet_ids   = module.subnets.public_subnet_id
   vpc_settings = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
   ad_name      = "clouddrovepoc.example.com"
-  ad_password  = "xyz123@abc"
+  ad_password  = "xyzsf58f5fqar"
   ip_whitelist = ["51.79.69.69/32"]
 }
