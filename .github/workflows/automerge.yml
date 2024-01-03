@@ -7,4 +7,6 @@ jobs:
     uses: clouddrove/github-shared-workflows/.github/workflows/auto_merge.yml@1.0.9
     secrets:
       GITHUB: ${{ secrets.GITHUB }}
+    with:
+      tfcheck: 'complete / Get min/max versions'
 ...
