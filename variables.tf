@@ -203,13 +203,13 @@ variable "alias" {
 }
 
 variable "description" {
-  default     = ""
+  default     = "Default Active Directory"
   type        = string
   description = "A textual description for the directory."
 }
 
 variable "short_name" {
-  default     = ""
+  default     = "CORP"
   type        = string
   description = "The short name of the directory, such as CORP."
 }
