@@ -46,4 +46,3 @@
 |------|-------------|
 | directory\_id | outputs of workspaces directory |
 | directory\_name | directory name. |
-
