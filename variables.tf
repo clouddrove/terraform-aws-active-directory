@@ -57,10 +57,16 @@ variable "connect_settings" {
 
 }
 
-variable "ad_name" {
+variable "directory_name" {
   default     = "corp.example.com"
   type        = string
   description = " The fully qualified name for the directory, such as corp.example.com"
+}
+
+variable "directory_size" {
+  description = "The size of the directory (Small or Large are accepted values). Large by default."
+  type        = string
+  default     = "Small" # Provide a default value
 }
 
 variable "ad_password" {
@@ -80,6 +86,21 @@ variable "ip_whitelist" {
   default     = ["51.79.69.69/32"]
   type        = list(string)
   description = "List of IP's to for whitelist"
+}
+
+variable "ip_rules" {
+  description = "List of IP rules"
+  type = list(object({
+    source      = string
+    description = string
+  }))
+  default = []
+}
+
+variable "ip_group_description" {
+  description = "Description of the IP access control group"
+  type        = string
+  default     = "default-ip-group-description"
 }
 
 variable "custom_policy" {
@@ -184,7 +205,7 @@ variable "user_enabled_as_local_administrator" {
   description = "Indicates whether users are local administrators of their WorkSpaces."
 }
 
-variable "type" {
+variable "directory_type" {
   default     = "SimpleAD"
   type        = string
   description = "The directory type (SimpleAD, ADConnector or MicrosoftAD are accepted values)."

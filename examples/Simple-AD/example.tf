@@ -39,8 +39,8 @@ module "subnets" {
 ##-----------------------------------------------------------------------------
 ## active-directory module call.
 ##-----------------------------------------------------------------------------
-module "ad" {
-  source       = "./../"
+module "simple-ad" {
+  source       = "../../"
   environment  = "test"
   name         = "adclouddrove"
   label_order  = ["name", "environment"]

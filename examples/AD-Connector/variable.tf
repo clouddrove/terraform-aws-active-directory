@@ -11,7 +11,7 @@ variable "name" {
 }
 
 variable "directory_type" {
-  default     = "MicrosoftAD"
+  default     = "ADConnector"
   type        = string
   description = "The directory type (SimpleAD, ADConnector or MicrosoftAD are accepted values)."
 }

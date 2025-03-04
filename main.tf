@@ -65,10 +65,10 @@ resource "aws_workspaces_directory" "main" {
 ##-----------------------------------------------------------------------------
 resource "aws_directory_service_directory" "main" {
   count       = var.enabled ? 1 : 0
-  name        = var.ad_name
+  name        = var.directory_name
   password    = var.ad_password
-  size        = var.ad_size
-  type        = var.type
+  size        = var.directory_size
+  type        = var.directory_type
   alias       = var.alias
   enable_sso  = var.enable_sso
   description = var.description
@@ -141,20 +141,18 @@ resource "aws_iam_role_policy_attachment" "workspaces_custom_s3_access" {
 
 #Module      : aws_workspaces_ip_group
 #Description : Provides an IP access control group in AWS WorkSpaces Service
-locals {
-  ip_rules = var.ip_whitelist
-}
-
 ##-----------------------------------------------------------------------------
 ## aws_workspaces_ip_group provides an IP access control group in AWS WorkSpaces Service.
 ##-----------------------------------------------------------------------------
 resource "aws_workspaces_ip_group" "ipgroup" {
-  count = var.enabled ? 1 : 0
-  name  = format("%s-ipgroup", var.name)
+  name        = format("%s-ipgroup", var.name)
+  description = var.ip_group_description
+
   dynamic "rules" {
-    for_each = local.ip_rules
+    for_each = var.ip_rules
     content {
-      source = rules.value
+      source      = rules.value.source
+      description = rules.value.description
     }
   }
 }

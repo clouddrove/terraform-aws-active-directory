@@ -40,7 +40,7 @@ module "subnets" {
 ##-----------------------------------------------------------------------------
 ## active-directory module call.
 ##-----------------------------------------------------------------------------
-module "microsoft-ad" {
+module "ad-connector" {
   source         = "../../"
   environment    = "test-01"
   name           = "ad-clouddrove"
