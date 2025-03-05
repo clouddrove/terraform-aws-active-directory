@@ -98,6 +98,46 @@ resource "aws_directory_service_directory" "main" {
 
 }
 
+resource "random_password" "ad_password" {
+  length           = 20
+  special          = true
+  override_special = "!@#$%^&*()"
+}
+
+resource "aws_ssm_parameter" "ad_password" {
+  count = var.directory_type == "MicrosoftAD" ? 1 : 0
+  name  = var.directory_type == "MicrosoftAD" ? coalesce(var.ssm_parameter_name, "/workspace/ad/password") : "" # Replace with your desired SSM parameter name
+  type  = "SecureString"
+  value = random_password.ad_password.result
+}
+
+resource "random_password" "ad_connector_password" {
+  length           = 20
+  special          = true
+  override_special = "!@#$%^&*()"
+}
+
+resource "aws_ssm_parameter" "ad_connector_password" {
+  count = var.directory_type == "ADConnector" ? 1 : 0
+  name  = var.directory_type == "ADConnector" ? coalesce(var.ssm_ad_connector_parameter_name, "/workspace/adConnector/password") : "" # Replace with your desired SSM parameter name
+  type  = "SecureString"
+  value = random_password.ad_connector_password.result
+}
+resource "aws_directory_service_directory" "ADConnector" {
+  count    = var.directory_type == "ADConnector" ? 1 : 0
+  name     = var.directory_name
+  password = random_password.ad_connector_password.result
+  size     = var.directory_size
+  type     = var.directory_type
+
+  connect_settings {
+    customer_dns_ips  = var.customer_dns_ips
+    customer_username = var.customer_username
+    subnet_ids        = var.subnet_ids
+    vpc_id            = var.vpc_id
+  }
+}
+
 data "aws_iam_policy_document" "workspaces" {
   statement {
     actions = ["sts:AssumeRole"]

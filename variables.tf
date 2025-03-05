@@ -24,6 +24,37 @@ variable "managedby" {
   description = "ManagedBy, eg 'CloudDrove' or 'AnmolNagpal'."
 }
 
+variable "customer_dns_ips" {
+  type        = list(string)
+  description = "(Required) The DNS IP addresses of the domain to connect to."
+  default     = []
+}
+
+variable "customer_username" {
+  type        = string
+  description = "(Required) The username corresponding to the password provided."
+  default     = ""
+}
+
+variable "vpc_id" {
+  description = "default vpc"
+  type        = string
+  default     = ""
+}
+
+variable "ssm_ad_connector_parameter_name" {
+  description = "ssm parameter name for microsoft AD"
+  type        = string
+  default     = "/workspace/Connector/password"
+}
+
+variable "ssm_parameter_name" {
+  description = "ssm parameter name for microsoft AD"
+  type        = string
+  default     = "/workspace/microsoft-ad/password"
+}
+
+
 variable "attributes" {
   type        = list(any)
   default     = []
@@ -246,3 +277,4 @@ variable "subnet_ids" {
   type        = list(string)
   description = "List of subnets in VPC"
 }
+

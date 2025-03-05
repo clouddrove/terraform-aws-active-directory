@@ -41,16 +41,20 @@ module "subnets" {
 ## active-directory module call.
 ##-----------------------------------------------------------------------------
 module "ad-connector" {
-  source         = "../../"
-  environment    = "test-01"
-  name           = "ad-clouddrove"
-  label_order    = ["name", "environment"]
-  directory_name = "test.ld.clouddrove.ca"
-  directory_size = var.directory_size
-  directory_type = var.directory_type
-  subnet_ids     = module.subnets.public_subnet_id
-  vpc_settings   = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
-  ad_password    = "xyz123@abc"
-  ip_rules       = var.ip_rules
+  source            = "../../"
+  environment       = "test-01"
+  enabled           = true
+  name              = "ad-clouddrove"
+  label_order       = ["name", "environment"]
+  directory_name    = "test.ld.clouddrove.ca"
+  directory_size    = var.directory_size
+  directory_type    = var.directory_type
+  subnet_ids        = module.subnets.public_subnet_id
+  vpc_settings      = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
+  ad_password       = "xyz123@abc"
+  ip_rules          = var.ip_rules
+  vpc_id            = module.vpc.vpc_id
+  customer_dns_ips  = ["152.59.98.171"]
+  customer_username = "test-user"
 }
 

@@ -10,6 +10,30 @@ variable "name" {
   description = "Name  (e.g. `app` or `cluster`)."
 }
 
+variable "enabled" {
+  type        = bool
+  default     = true
+  description = "Flag to control the module creation."
+}
+
+variable "vpc_id" {
+  description = "default vpc"
+  type        = string
+  default     = ""
+}
+
+variable "customer_dns_ips" {
+  type        = list(string)
+  description = "(Required) The DNS IP addresses of the domain to connect to."
+  default     = []
+}
+
+variable "customer_username" {
+  type        = string
+  description = "(Required) The username corresponding to the password provided."
+  default     = ""
+}
+
 variable "directory_type" {
   default     = "ADConnector"
   type        = string
