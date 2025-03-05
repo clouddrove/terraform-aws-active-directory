@@ -11,25 +11,24 @@ variable "name" {
 }
 
 variable "directory_type" {
-  default     = "MicrosoftAD"
   type        = string
+  default     = "MicrosoftAD"
   description = "The directory type (SimpleAD, ADConnector or MicrosoftAD are accepted values)."
 }
 
 variable "directory_name" {
-  default     = "ld.clouddrove.ca"
   type        = string
-  description = "The fully qualified name for the directory, such as corp.example.com"
+  default     = "ld.clouddrove.ca"
+  description = "The fully qualified name for the directory, such as corp.example.com."
 }
 
 variable "directory_size" {
-  description = "The size of the directory (Small or Large are accepted values). Small by default."
   type        = string
-  default     = "Small" # Provide a default value
+  default     = "Small"
+  description = "The size of the directory (Small or Large are accepted values)."
 }
 
 variable "ip_rules" {
-  description = "List of IP rules"
   type = list(object({
     source      = string
     description = string
@@ -44,30 +43,30 @@ variable "ip_rules" {
       description = "NAT"
     },
   ]
+  description = "List of IP rules."
 }
 
 variable "subnet_ids" {
-  default     = null
   type        = list(string)
-  description = "List of subnets in VPC"
+  default     = null
+  description = "List of subnets in VPC."
 }
 
 variable "vpc_settings" {
   type        = map(string)
   default     = {}
-  description = "(Required for SimpleAD and MicrosoftAD) VPC related information about the directory. Fields documented below."
-
+  description = "(Required for SimpleAD and MicrosoftAD) VPC related information about the directory."
 }
 
 variable "ad_password" {
-  default     = "xyzsf58f5fqar"
   type        = string
+  default     = "xyzsf58f5fqar"
   description = "The password for the directory administrator or connector user."
   sensitive   = true
 }
 
 variable "ip_whitelist" {
-  default     = ["183.83.54.134/32"]
   type        = list(string)
-  description = "List of IP's to for whitelist"
+  default     = ["183.83.54.134/32"]
+  description = "List of IPs to whitelist."
 }
