@@ -1,5 +1,5 @@
 ##-----------------------------------------------------------------------------
-## Labels module callled that will be used for naming and tags.
+## Labels module called that will be used for naming and tags.
 ##-----------------------------------------------------------------------------
 module "labels" {
   source  = "clouddrove/labels/aws"
@@ -14,7 +14,8 @@ module "labels" {
 }
 
 ##-----------------------------------------------------------------------------
-## Provides a WorkSpaces directory in AWS WorkSpaces Service. NOTE: AWS WorkSpaces service requires workspaces_DefaultRole IAM role to operate normally.
+## Provides a WorkSpaces directory in AWS WorkSpaces Service.
+## NOTE: AWS WorkSpaces service requires workspaces_DefaultRole IAM role to operate normally.
 ##-----------------------------------------------------------------------------
 resource "aws_workspaces_directory" "main" {
   count = var.enabled ? 1 : 0
@@ -61,7 +62,8 @@ resource "aws_workspaces_directory" "main" {
 }
 
 ##-----------------------------------------------------------------------------
-## Resource: aws_directory_service_directory. Provides a Simple or Managed Microsoft directory in AWS Directory Service.
+## Resource: aws_directory_service_directory.
+## Provides a Simple or Managed Microsoft directory in AWS Directory Service.
 ##-----------------------------------------------------------------------------
 resource "aws_directory_service_directory" "main" {
   count       = var.enabled ? 1 : 0
@@ -95,9 +97,11 @@ resource "aws_directory_service_directory" "main" {
       vpc_id            = lookup(connect_settings.value, "vpc_id", null)
     }
   }
-
 }
 
+##-----------------------------------------------------------------------------
+## Random Password Resources
+##-----------------------------------------------------------------------------
 resource "random_password" "ad_password" {
   length           = 20
   special          = true
@@ -123,6 +127,7 @@ resource "aws_ssm_parameter" "ad_connector_password" {
   type  = "SecureString"
   value = random_password.ad_connector_password.result
 }
+
 resource "aws_directory_service_directory" "ADConnector" {
   count    = var.directory_type == "ADConnector" ? 1 : 0
   name     = var.directory_name
@@ -138,6 +143,9 @@ resource "aws_directory_service_directory" "ADConnector" {
   }
 }
 
+##-----------------------------------------------------------------------------
+## IAM Role and Policy Attachments
+##-----------------------------------------------------------------------------
 data "aws_iam_policy_document" "workspaces" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -149,18 +157,12 @@ data "aws_iam_policy_document" "workspaces" {
   }
 }
 
-##-----------------------------------------------------------------------------
-## aws_iam_role. An IAM role is an AWS Identity and Access Management (IAM) entity with permissions to make AWS service requests.
-##-----------------------------------------------------------------------------
 resource "aws_iam_role" "workspaces_default" {
   count              = var.enabled ? 1 : 0
   name               = format("%s-workspaces_Role", module.labels.id)
   assume_role_policy = data.aws_iam_policy_document.workspaces.json
 }
 
-##-----------------------------------------------------------------------------
-## aws_iam_role_policy_attachment Attaches a Managed IAM Policy to an IAM role.
-##-----------------------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "workspaces_default_service_access" {
   count      = var.enabled ? 1 : 0
   role       = join("", aws_iam_role.workspaces_default[*].name)
@@ -179,10 +181,8 @@ resource "aws_iam_role_policy_attachment" "workspaces_custom_s3_access" {
   policy_arn = var.custom_policy
 }
 
-#Module      : aws_workspaces_ip_group
-#Description : Provides an IP access control group in AWS WorkSpaces Service
 ##-----------------------------------------------------------------------------
-## aws_workspaces_ip_group provides an IP access control group in AWS WorkSpaces Service.
+## IP Access Control Group
 ##-----------------------------------------------------------------------------
 resource "aws_workspaces_ip_group" "ipgroup" {
   name        = format("%s-ipgroup", var.name)
