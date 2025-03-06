@@ -1,15 +1,3 @@
-variable "description" {
-  default     = "Default Active Directory"
-  type        = string
-  description = "A textual description for the directory."
-}
-
-variable "vpc_id" {
-  description = "default vpc"
-  type        = string
-  default     = ""
-}
-
 variable "customer_dns_ips" {
   type        = list(string)
   description = "(Required) The DNS IP addresses of the domain to connect to."
@@ -31,12 +19,6 @@ variable "directory_type" {
   default     = "ADConnector"
   type        = string
   description = "The directory type (SimpleAD, ADConnector or MicrosoftAD are accepted values)."
-}
-
-variable "directory_name" {
-  default     = "ld.clouddrove.ca"
-  type        = string
-  description = "The fully qualified name for the directory, such as corp.example.com"
 }
 
 variable "directory_size" {
@@ -61,12 +43,6 @@ variable "ip_rules" {
       description = "NAT"
     },
   ]
-}
-
-variable "subnet_ids" {
-  default     = null
-  type        = list(string)
-  description = "List of subnets in VPC"
 }
 
 variable "vpc_settings" {
