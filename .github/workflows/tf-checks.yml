@@ -5,7 +5,15 @@ on:
   pull_request:
   workflow_dispatch:
 jobs:
-  examples:
+  AD-Connector:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
     with:
-      working_directory: './examples/'
+      working_directory: './examples/AD-Connector/'
+  Microsoft-AD:
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    with:
+      working_directory: './examples/Microsoft-AD/'
+  Simple-AD:
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    with:
+      working_directory: './examples/Simple-AD/'

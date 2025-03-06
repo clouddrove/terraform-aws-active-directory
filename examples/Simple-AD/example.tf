@@ -1,12 +1,14 @@
 ##---------------------------------------------------------------------------------------------------------------------------
-## Provider block added, Use the Amazon Web Services (AWS) provider to interact with the many resources supported by AWS.
-##--------------------------------------------------------------------------------------------------------------------------
+## Provider Configuration
+## Use the Amazon Web Services (AWS) provider to interact with the many resources supported by AWS.
+##---------------------------------------------------------------------------------------------------------------------------
 provider "aws" {
-  region = "eu-west-1"
+  region = "us-east-1"
 }
 
-#----------------------------------------------------------------------------------
-## A VPC is a virtual network that closely resembles a traditional network that you'd operate in your own data center.
+##----------------------------------------------------------------------------------
+## VPC Module
+## A VPC (Virtual Private Cloud) is a virtual network that closely resembles a traditional network that you'd operate in your own data center.
 ##----------------------------------------------------------------------------------
 module "vpc" {
   source  = "clouddrove/vpc/aws"
@@ -20,6 +22,7 @@ module "vpc" {
 }
 
 ##-----------------------------------------------------
+## Subnets Module
 ## A subnet is a range of IP addresses in your VPC.
 ##-----------------------------------------------------
 module "subnets" {
@@ -28,7 +31,7 @@ module "subnets" {
   name               = "subnets"
   environment        = "test"
   label_order        = ["name", "environment"]
-  availability_zones = ["eu-west-1a", "eu-west-1b"]
+  availability_zones = ["us-east-1a", "us-east-1b"]
   vpc_id             = module.vpc.vpc_id
   type               = "public"
   igw_id             = module.vpc.igw_id
@@ -37,16 +40,26 @@ module "subnets" {
 }
 
 ##-----------------------------------------------------------------------------
-## active-directory module call.
+## Simple Active Directory Module
+## This module sets up a Simple Active Directory within the specified VPC and subnets.
 ##-----------------------------------------------------------------------------
 module "simple-ad" {
-  source       = "../../"
-  environment  = "test"
-  name         = "adclouddrove"
-  label_order  = ["name", "environment"]
-  subnet_ids   = module.subnets.public_subnet_id
-  vpc_settings = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
-  ad_name      = "clouddrovepoc.example.com"
-  ad_password  = "xyz123@abc"
-  ip_whitelist = ["51.79.69.69/32"]
+  source         = "../../"
+  environment    = "test"
+  name           = "ad-clouddrove"
+  label_order    = ["name", "environment"]
+  directory_type = "SimpleAD"
+  subnet_ids     = module.subnets.public_subnet_id
+  vpc_settings   = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
+  directory_name = "ld.clouddrove.ca"
+  ad_password    = "xyz123@abc"
+  ip_rules       = var.ip_rules
+
+  # Additional optional parameters for more features
+  edition     = "Standard" # Can be "Standard" or "Enterprise"
+  short_name  = "clouddrove"
+  description = "Simple AD for Clouddrove"
+  # The alias attribute is required when enable_sso is set to true.
+  # The alias is used to create a unique identifier for the directory.
+  enable_sso  = false
 }

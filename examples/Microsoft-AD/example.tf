@@ -1,12 +1,13 @@
-
 ##---------------------------------------------------------------------------------------------------------------------------
-## Provider block added, Use the Amazon Web Services (AWS) provider to interact with the many resources supported by AWS.
-##--------------------------------------------------------------------------------------------------------------------------
+## Provider Configuration
+## Use the Amazon Web Services (AWS) provider to interact with the many resources supported by AWS.
+##---------------------------------------------------------------------------------------------------------------------------
 provider "aws" {
   region = "us-east-1"
 }
 
-#----------------------------------------------------------------------------------
+##----------------------------------------------------------------------------------
+## Virtual Private Cloud (VPC)
 ## A VPC is a virtual network that closely resembles a traditional network that you'd operate in your own data center.
 ##----------------------------------------------------------------------------------
 module "vpc" {
@@ -14,20 +15,21 @@ module "vpc" {
   version = "2.0.0"
 
   name        = "vpc"
-  environment = "test-01"
+  environment = "test"
   label_order = ["name", "environment"]
 
-  cidr_block = "10.10.0.0/16"
+  cidr_block = "10.0.0.0/16"
 }
 
 ##-----------------------------------------------------
+## Subnets
 ## A subnet is a range of IP addresses in your VPC.
 ##-----------------------------------------------------
 module "subnets" {
   source             = "clouddrove/subnet/aws"
   version            = "2.0.1"
   name               = "subnets"
-  environment        = "test-01"
+  environment        = "test"
   label_order        = ["name", "environment"]
   availability_zones = ["us-east-1a", "us-east-1b"]
   vpc_id             = module.vpc.vpc_id
@@ -38,19 +40,19 @@ module "subnets" {
 }
 
 ##-----------------------------------------------------------------------------
-## active-directory module call.
+## Microsoft Active Directory
+## This module sets up a Microsoft Active Directory within the specified VPC.
 ##-----------------------------------------------------------------------------
 module "microsoft-ad" {
   source         = "../../"
-  environment    = "test-01"
+  environment    = "test"
   name           = "ad-clouddrove"
   label_order    = ["name", "environment"]
-  directory_name = "test.ld.clouddrove.ca"
+  directory_type = "MicrosoftAD"
   directory_size = var.directory_size
-  directory_type = var.directory_type
+  directory_name = "test.ld.clouddrove.ca"
   subnet_ids     = module.subnets.public_subnet_id
   vpc_settings   = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
   ad_password    = "xyz123@abc"
   ip_rules       = var.ip_rules
 }
-

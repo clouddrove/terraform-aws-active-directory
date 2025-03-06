@@ -113,12 +113,6 @@ variable "ad_size" {
   description = "The size of the directory (Small or Large are accepted values)."
 }
 
-variable "ip_whitelist" {
-  default     = ["51.79.69.69/32"]
-  type        = list(string)
-  description = "List of IP's to for whitelist"
-}
-
 variable "ip_rules" {
   description = "List of IP rules"
   type = list(object({

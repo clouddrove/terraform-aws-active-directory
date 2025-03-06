@@ -1,9 +1,11 @@
-# outputs of workspaces directory
-output "id" {
-  value       = module.ad.directory_id
-  description = "directory name."
+# Outputs for Simple AD module
+
+output "directory_id" {
+  value       = module.simple-ad.directory_id
+  description = "The ID of the Simple AD directory."
 }
-output "name" {
-  value       = module.ad.directory_name
-  description = "directory name."
+
+output "directory_name" {
+  value       = module.simple-ad.directory_name
+  description = "The name of the Simple AD directory."
 }
