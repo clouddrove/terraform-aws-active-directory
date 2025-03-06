@@ -1,19 +1,7 @@
-variable "environment" {
+variable "description" {
+  default     = "Default Active Directory"
   type        = string
-  default     = "dev"
-  description = "Environment (e.g. `prod`, `dev`, `staging`)."
-}
-
-variable "name" {
-  type        = string
-  default     = ""
-  description = "Name  (e.g. `app` or `cluster`)."
-}
-
-variable "enabled" {
-  type        = bool
-  default     = true
-  description = "Flag to control the module creation."
+  description = "A textual description for the directory."
 }
 
 variable "vpc_id" {
@@ -28,6 +16,11 @@ variable "customer_dns_ips" {
   default     = []
 }
 
+variable "enabled" {
+  type        = bool
+  default     = true
+  description = "Flag to control the module creation."
+}
 variable "customer_username" {
   type        = string
   description = "(Required) The username corresponding to the password provided."
@@ -84,14 +77,9 @@ variable "vpc_settings" {
 }
 
 variable "ad_password" {
-  default     = "xyzsf58f5fqar"
+  default     = ""
   type        = string
   description = "The password for the directory administrator or connector user."
   sensitive   = true
 }
 
-variable "ip_whitelist" {
-  default     = ["183.83.54.134/32"]
-  type        = list(string)
-  description = "List of IP's to for whitelist"
-}

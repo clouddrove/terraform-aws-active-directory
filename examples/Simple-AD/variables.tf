@@ -45,3 +45,10 @@ variable "ip_rules" {
   ]
   description = "List of IP access controls for the workspace directory."
 }
+
+variable "ad_password" {
+  default     = ""
+  type        = string
+  description = "The password for the directory administrator or connector user."
+  sensitive   = true
+}

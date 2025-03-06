@@ -123,9 +123,9 @@ variable "ip_rules" {
 }
 
 variable "ip_group_description" {
-  description = "Description of the IP access control group"
   type        = string
-  default     = "default-ip-group-description"
+  default     = "IP Access Control Group for environment."
+  description = "IP access control group description."
 }
 
 variable "custom_policy" {

@@ -55,4 +55,12 @@ module "microsoft-ad" {
   vpc_settings   = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
   ad_password    = "xyz123@abc"
   ip_rules       = var.ip_rules
+
+  # Additional features
+  # Additional optional parameters for more features
+  edition     = "Standard" # Can be "Standard" or "Enterprise"
+  short_name  = "clouddrove"
+  description = "Microsoft AD for Clouddrove"
+  enable_sso  = false
+  alias       = "clouddrove-ad"
 }
