@@ -35,15 +35,11 @@ variable "ip_rules" {
   }))
   default = [
     {
-      source      = "43.224.1.228/32" // change it according to your requirement
-      description = "NAT"
-    },
-    {
-      source      = "125.191.14.85/32" // change it according to your requirement
-      description = "NAT"
-    },
+      source      = "51.79.69.69/32" // change it according to your requirement
+      description = "IP Whitelisting"
+    }
   ]
-  description = "List of IP access controls for the workspace directory."
+  description = "List of IP rules."
 }
 
 variable "ad_password" {

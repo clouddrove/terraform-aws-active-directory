@@ -49,7 +49,7 @@ module "microsoft-ad" {
   name           = "ad-clouddrove"
   label_order    = ["name", "environment"]
   directory_type = "MicrosoftAD"
-  directory_size = var.directory_size
+  directory_size = "Small"
   directory_name = "test.ld.clouddrove.ca"
   subnet_ids     = module.subnets.public_subnet_id
   vpc_settings   = { vpc_id : module.vpc.vpc_id, subnet_ids : join(",", module.subnets.public_subnet_id) }
