@@ -95,7 +95,6 @@ resource "aws_directory_service_directory" "main" {
       vpc_id            = lookup(connect_settings.value, "vpc_id", null)
     }
   }
-
 }
 
 resource "random_password" "ad_password" {
