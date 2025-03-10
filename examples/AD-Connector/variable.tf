@@ -1,9 +1,3 @@
-variable "directory_size" {
-  description = "The size of the directory (Small or Large are accepted values). Small by default."
-  type        = string
-  default     = "Small" # Provide a default value
-}
-
 variable "ip_rules" {
   type = list(object({
     source      = string

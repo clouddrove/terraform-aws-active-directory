@@ -49,7 +49,7 @@ module "ad-connector" {
   label_order       = ["name", "environment"]
   directory_name    = "ld.clouddrove.ca"
   directory_type    = "ADConnector"
-  directory_size    = var.directory_size
+  directory_size    = "Small"
   vpc_id            = module.vpc.vpc_id
   subnet_ids        = module.subnets.public_subnet_id
   ad_password       = "xyz123@abc"
