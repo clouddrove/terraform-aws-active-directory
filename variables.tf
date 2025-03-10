@@ -107,12 +107,6 @@ variable "ad_password" {
   sensitive   = true
 }
 
-variable "ad_size" {
-  default     = "Small"
-  type        = string
-  description = "The size of the directory (Small or Large are accepted values)."
-}
-
 variable "ip_rules" {
   description = "List of IP rules"
   type = list(object({
