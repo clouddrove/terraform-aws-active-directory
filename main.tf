@@ -109,8 +109,7 @@ resource "aws_ssm_parameter" "ad_password" {
   name  = coalesce(var.ssm_parameter_name, "/workspace/ad/password")
   type  = "SecureString"
   value = random_password.ad_password[0].result # Use index since count is set
-
-  overwrite = true 
+  
 }
 
 resource "random_password" "ad_connector_password" {
@@ -158,7 +157,7 @@ data "aws_iam_policy_document" "workspaces" {
 ##-----------------------------------------------------------------------------
 resource "aws_iam_role" "workspaces_default" {
   count              = var.enabled ? 1 : 0
-  name               = format("%s-workspaces-Role", module.labels.id)
+  name               = format("%s-workspaces-role", module.labels.id)
   assume_role_policy = var.custom_assume_role_policy != null ? var.custom_assume_role_policy : data.aws_iam_policy_document.workspaces.json
 }
 
