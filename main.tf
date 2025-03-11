@@ -98,6 +98,7 @@ resource "aws_directory_service_directory" "main" {
 }
 
 resource "random_password" "ad_password" {
+  count            = var.directory_type == "MicrosoftAD" ? 1 : 0
   length           = 20
   special          = true
   override_special = "!@#$%^&*()"
@@ -105,12 +106,15 @@ resource "random_password" "ad_password" {
 
 resource "aws_ssm_parameter" "ad_password" {
   count = var.directory_type == "MicrosoftAD" ? 1 : 0
-  name  = var.directory_type == "MicrosoftAD" ? coalesce(var.ssm_parameter_name, "/workspace/ad/password") : "" # Replace with your desired SSM parameter name
+  name  = coalesce(var.ssm_parameter_name, "/workspace/ad/password")
   type  = "SecureString"
-  value = random_password.ad_password.result
+  value = random_password.ad_password[0].result # Use index since count is set
+
+  overwrite = true 
 }
 
 resource "random_password" "ad_connector_password" {
+  count = var.directory_type == "ADConnector" ? 1 : 0
   length           = 20
   special          = true
   override_special = "!@#$%^&*()"
@@ -118,14 +122,15 @@ resource "random_password" "ad_connector_password" {
 
 resource "aws_ssm_parameter" "ad_connector_password" {
   count = var.directory_type == "ADConnector" ? 1 : 0
-  name  = var.directory_type == "ADConnector" ? coalesce(var.ssm_ad_connector_parameter_name, "/workspace/adConnector/password") : "" # Replace with your desired SSM parameter name
+  name  = coalesce(var.ssm_ad_connector_parameter_name, "/workspace/adConnector/password")
   type  = "SecureString"
-  value = random_password.ad_connector_password.result
+  value = random_password.ad_connector_password[0].result # Use index since count is set
 }
+
 resource "aws_directory_service_directory" "ADConnector" {
   count    = var.directory_type == "ADConnector" ? 1 : 0
   name     = var.directory_name
-  password = random_password.ad_connector_password.result
+  password = random_password.ad_connector_password[0].result
   size     = var.directory_size
   type     = var.directory_type
 
@@ -153,8 +158,8 @@ data "aws_iam_policy_document" "workspaces" {
 ##-----------------------------------------------------------------------------
 resource "aws_iam_role" "workspaces_default" {
   count              = var.enabled ? 1 : 0
-  name               = format("%s-workspaces_Role", module.labels.id)
-  assume_role_policy = data.aws_iam_policy_document.workspaces.json
+  name               = format("%s-workspaces-Role", module.labels.id)
+  assume_role_policy = var.custom_assume_role_policy != null ? var.custom_assume_role_policy : data.aws_iam_policy_document.workspaces.json
 }
 
 ##-----------------------------------------------------------------------------

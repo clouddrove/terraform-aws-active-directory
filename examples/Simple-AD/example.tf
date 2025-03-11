@@ -62,5 +62,5 @@ module "simple-ad" {
   # The alias attribute is required when enable_sso is set to true.
   # The alias is used to create a unique identifier for the directory.
   enable_sso = false
-  alias      = "clouddrove-ad"
+  # alias      = "clouddrove-ad"
 }

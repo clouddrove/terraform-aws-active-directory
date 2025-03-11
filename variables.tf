@@ -266,3 +266,9 @@ variable "subnet_ids" {
   description = "List of subnets in VPC"
 }
 
+variable "custom_assume_role_policy" {
+  description = "Optional custom assume role policy for WorkSpaces role"
+  type        = string
+  default     = null
+}
+
