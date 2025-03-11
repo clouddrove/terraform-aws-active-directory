@@ -106,14 +106,17 @@ resource "random_password" "ad_password" {
 
 resource "aws_ssm_parameter" "ad_password" {
   count = var.directory_type == "MicrosoftAD" ? 1 : 0
-  name  = coalesce(var.ssm_parameter_name, "/workspace/ad/password")
+  name  = coalesce(var.ssm_parameter_name, "/workspace/microsoftad/password")
   type  = "SecureString"
   value = random_password.ad_password[0].result # Use index since count is set
-  
+
+  lifecycle {
+    ignore_changes = [value] # Prevents unnecessary updates
+  }
 }
 
 resource "random_password" "ad_connector_password" {
-  count = var.directory_type == "ADConnector" ? 1 : 0
+  count            = var.directory_type == "ADConnector" ? 1 : 0
   length           = 20
   special          = true
   override_special = "!@#$%^&*()"
@@ -124,6 +127,10 @@ resource "aws_ssm_parameter" "ad_connector_password" {
   name  = coalesce(var.ssm_ad_connector_parameter_name, "/workspace/adConnector/password")
   type  = "SecureString"
   value = random_password.ad_connector_password[0].result # Use index since count is set
+
+  lifecycle {
+    ignore_changes = [value] # Prevents unnecessary updates
+  }
 }
 
 resource "aws_directory_service_directory" "ADConnector" {
