@@ -242,6 +242,7 @@ variable "alias" {
   description = "The directory type (SimpleAD, ADConnector or MicrosoftAD are accepted values)."
 }
 
+
 variable "description" {
   default     = "Default Active Directory"
   type        = string
