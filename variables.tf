@@ -87,13 +87,6 @@ variable "vpc_settings" {
 
 }
 
-variable "connect_settings" {
-  type        = map(string)
-  default     = {}
-  description = "(Required for ADConnector) Connector related information about the directory. Fields documented below."
-
-}
-
 variable "directory_name" {
   default     = "corp.example.com"
   type        = string
