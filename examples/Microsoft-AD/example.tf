@@ -62,5 +62,7 @@ module "microsoft-ad" {
   short_name  = "clouddrove"
   description = "Microsoft AD for Clouddrove"
   enable_sso  = false
-  alias       = "clouddrove-ad"
+  # Set to true to enable Single Sign-On (SSO) for Microsoft AD
+  # Uncomment the following line to set an alias for the Microsoft AD
+  # alias       = "clouddrove-ad"
 }

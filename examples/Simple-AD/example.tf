@@ -59,8 +59,8 @@ module "simple-ad" {
   edition     = "Standard" # Can be "Standard" or "Enterprise"
   short_name  = "clouddrove"
   description = "Simple AD for Clouddrove"
-  # The alias attribute is required when enable_sso is set to true.
-  # The alias is used to create a unique identifier for the directory.
-  enable_sso = false
-  # alias      = "clouddrove-ad"
+  enable_sso  = false
+  # Set to true to enable Single Sign-On (SSO) for Microsoft AD
+  # Uncomment the following line to set an alias for the Microsoft AD
+  # alias       = "clouddrove-ad"
 }

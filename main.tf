@@ -1,5 +1,5 @@
 ##-----------------------------------------------------------------------------
-## Labels module callled that will be used for naming and tags.
+## Labels module called that will be used for naming and tags.
 ##-----------------------------------------------------------------------------
 module "labels" {
   source  = "clouddrove/labels/aws"
@@ -14,14 +14,19 @@ module "labels" {
 }
 
 ##-----------------------------------------------------------------------------
-## Provides a WorkSpaces directory in AWS WorkSpaces Service. NOTE: AWS WorkSpaces service requires workspaces_DefaultRole IAM role to operate normally.
+## Provides a WorkSpaces directory in AWS WorkSpaces Service.
+## NOTE: AWS WorkSpaces service requires workspaces_DefaultRole IAM role to operate normally.
 ##-----------------------------------------------------------------------------
 resource "aws_workspaces_directory" "main" {
   count = var.enabled ? 1 : 0
 
-  directory_id = join("", aws_directory_service_directory.main[*].id)
-  subnet_ids   = var.subnet_ids
+  directory_id = join("", flatten([
+    try(aws_directory_service_directory.simpleAD[*].id, []),
+    try(aws_directory_service_directory.microsoftAD[*].id, []),
+    try(aws_directory_service_directory.ad_connector[*].id, [])
+  ]))
 
+  subnet_ids = var.subnet_ids
   ip_group_ids = [
     join("", aws_workspaces_ip_group.ipgroup[*].id),
   ]
@@ -29,28 +34,30 @@ resource "aws_workspaces_directory" "main" {
   tags = module.labels.tags
 
   self_service_permissions {
-    change_compute_type  = var.change_compute_type
-    increase_volume_size = var.increase_volume_size
-    rebuild_workspace    = var.rebuild_workspace
-    restart_workspace    = var.restart_workspace
-    switch_running_mode  = var.switch_running_mode
+    change_compute_type  = var.self_service_permissions.change_compute_type
+    increase_volume_size = var.self_service_permissions.increase_volume_size
+    rebuild_workspace    = var.self_service_permissions.rebuild_workspace
+    restart_workspace    = var.self_service_permissions.restart_workspace
+    switch_running_mode  = var.self_service_permissions.switch_running_mode
   }
 
   workspace_access_properties {
-    device_type_android    = var.device_type_android
-    device_type_chromeos   = var.device_type_chromeos
-    device_type_ios        = var.device_type_ios
-    device_type_osx        = var.device_type_osx
-    device_type_web        = var.device_type_web
-    device_type_windows    = var.device_type_windows
-    device_type_zeroclient = var.device_type_zeroclient
-    device_type_linux      = var.device_type_linux
+    device_type_android    = var.workspace_access_properties.device_type_android
+    device_type_chromeos   = var.workspace_access_properties.device_type_chromeos
+    device_type_ios        = var.workspace_access_properties.device_type_ios
+    device_type_osx        = var.workspace_access_properties.device_type_osx
+    device_type_web        = var.workspace_access_properties.device_type_web
+    device_type_windows    = var.workspace_access_properties.device_type_windows
+    device_type_zeroclient = var.workspace_access_properties.device_type_zeroclient
+    device_type_linux      = var.workspace_access_properties.device_type_linux
   }
 
   workspace_creation_properties {
-    enable_internet_access              = var.enable_internet_access
-    enable_maintenance_mode             = var.enable_maintenance_mode
-    user_enabled_as_local_administrator = var.user_enabled_as_local_administrator
+    enable_internet_access              = var.workspace_creation_properties.enable_internet_access
+    enable_maintenance_mode             = var.workspace_creation_properties.enable_maintenance_mode
+    user_enabled_as_local_administrator = var.workspace_creation_properties.user_enabled_as_local_administrator
+    custom_security_group_id            = var.workspace_creation_properties.custom_security_group_id
+    default_ou                          = var.workspace_creation_properties.default_ou
   }
 
   depends_on = [
@@ -61,12 +68,31 @@ resource "aws_workspaces_directory" "main" {
 }
 
 ##-----------------------------------------------------------------------------
-## Resource: aws_directory_service_directory. Provides a Simple or Managed Microsoft directory in AWS Directory Service.
+## Simple Active Directory Resources
 ##-----------------------------------------------------------------------------
-resource "aws_directory_service_directory" "main" {
-  count       = var.enabled ? 1 : 0
+
+resource "random_password" "simple_ad_password" {
+  count            = var.directory_type == "SimpleAD" && (var.ad_password == null || var.ad_password == "") ? 1 : 0
+  length           = 20
+  special          = true
+  override_special = "!@#$%^&*()"
+}
+
+resource "aws_ssm_parameter" "simple_ad_password" {
+  count = var.directory_type == "SimpleAD" && var.create_ssm_parameter ? 1 : 0
+  name  = coalesce(var.ssm_parameter_name, "/workspace/simple-ad/password")
+  type  = "SecureString"
+  value = random_password.simple_ad_password[0].result # Use index since count is set
+
+  lifecycle {
+    ignore_changes = [value] # Prevents unnecessary updates
+  }
+}
+
+resource "aws_directory_service_directory" "simpleAD" {
+  count       = var.directory_type == "SimpleAD" ? 1 : 0
   name        = var.directory_name
-  password    = var.ad_password
+  password    = coalesce(var.ad_password, try(random_password.simple_ad_password[0].result, ""))
   size        = var.directory_size
   type        = var.directory_type
   alias       = var.alias
@@ -84,61 +110,84 @@ resource "aws_directory_service_directory" "main" {
       vpc_id     = lookup(vpc_settings.value, "vpc_id", null)
     }
   }
-
-  dynamic "connect_settings" {
-    for_each = length(keys(var.connect_settings)) == 0 ? [] : [var.connect_settings]
-
-    content {
-      customer_username = lookup(connect_settings.value, "customer_username", null)
-      customer_dns_ips  = lookup(connect_settings.value, "customer_dns_ips", null)
-      subnet_ids        = split(",", lookup(connect_settings.value, "subnet_ids", null))
-      vpc_id            = lookup(connect_settings.value, "vpc_id", null)
-    }
-  }
 }
 
-resource "random_password" "ad_password" {
-  count            = var.directory_type == "MicrosoftAD" ? 1 : 0
+##-----------------------------------------------------------------------------
+## Microsoft AD Resources
+# ##-----------------------------------------------------------------------------
+resource "random_password" "microsoft_ad_password" {
+  count            = var.directory_type == "MicrosoftAD" && (var.ad_password == null || var.ad_password == "") ? 1 : 0
   length           = 20
   special          = true
   override_special = "!@#$%^&*()"
 }
-
-resource "aws_ssm_parameter" "ad_password" {
-  count = var.directory_type == "MicrosoftAD" ? 1 : 0
-  name  = coalesce(var.ssm_parameter_name, "/workspace/microsoftad/password")
+resource "aws_ssm_parameter" "microsoft_ad_password" {
+  count = var.directory_type == "MicrosoftAD" && var.create_ssm_parameter ? 1 : 0
+  name  = coalesce(var.ssm_parameter_name, "/workspace/microsoft-ad/password")
   type  = "SecureString"
-  value = random_password.ad_password[0].result # Use index since count is set
+  value = random_password.microsoft_ad_password[0].result # Use index since count is set
 
   lifecycle {
     ignore_changes = [value] # Prevents unnecessary updates
   }
 }
 
+resource "aws_directory_service_directory" "microsoftAD" {
+  count       = var.directory_type == "MicrosoftAD" ? 1 : 0
+  name        = var.directory_name
+  password    = coalesce(var.ad_password, try(random_password.microsoft_ad_password[0].result, ""))
+  size        = var.directory_size
+  type        = var.directory_type
+  alias       = var.alias
+  enable_sso  = var.enable_sso
+  description = var.description
+  short_name  = var.short_name
+  edition     = var.edition
+  tags        = module.labels.tags
+
+  dynamic "vpc_settings" {
+    for_each = length(keys(var.vpc_settings)) == 0 ? [] : [var.vpc_settings]
+
+    content {
+      subnet_ids = split(",", lookup(vpc_settings.value, "subnet_ids", null))
+      vpc_id     = lookup(vpc_settings.value, "vpc_id", null)
+    }
+  }
+}
+
+##-----------------------------------------------------------------------------
+## AD Connector Resources
+##-----------------------------------------------------------------------------
 resource "random_password" "ad_connector_password" {
-  count            = var.directory_type == "ADConnector" ? 1 : 0
+  count            = var.directory_type == "ADConnector" && (var.ad_password == null || var.ad_password == "") ? 1 : 0
   length           = 20
   special          = true
   override_special = "!@#$%^&*()"
 }
 
 resource "aws_ssm_parameter" "ad_connector_password" {
-  count = var.directory_type == "ADConnector" ? 1 : 0
+  count = var.directory_type == "ADConnector" && var.create_ssm_parameter ? 1 : 0
   name  = coalesce(var.ssm_ad_connector_parameter_name, "/workspace/adConnector/password")
   type  = "SecureString"
-  value = random_password.ad_connector_password[0].result # Use index since count is set
+  value = random_password.ad_connector_password[0].result
 
   lifecycle {
-    ignore_changes = [value] # Prevents unnecessary updates
+    ignore_changes = [value]
   }
 }
 
-resource "aws_directory_service_directory" "ADConnector" {
-  count    = var.directory_type == "ADConnector" ? 1 : 0
-  name     = var.directory_name
-  password = random_password.ad_connector_password[0].result
-  size     = var.directory_size
-  type     = var.directory_type
+resource "aws_directory_service_directory" "ad_connector" {
+  count       = var.directory_type == "ADConnector" ? 1 : 0
+  name        = var.directory_name
+  password    = coalesce(var.ad_password, try(random_password.ad_connector_password[0].result, ""))
+  size        = var.directory_size
+  type        = var.directory_type
+  alias       = var.alias
+  enable_sso  = var.enable_sso
+  description = var.description
+  short_name  = var.short_name
+  edition     = var.edition
+  tags        = module.labels.tags
 
   connect_settings {
     customer_dns_ips  = var.customer_dns_ips
@@ -148,6 +197,9 @@ resource "aws_directory_service_directory" "ADConnector" {
   }
 }
 
+##-----------------------------------------------------------------------------
+## IAM Role and Policy Attachments
+##-----------------------------------------------------------------------------
 data "aws_iam_policy_document" "workspaces" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -159,18 +211,12 @@ data "aws_iam_policy_document" "workspaces" {
   }
 }
 
-##-----------------------------------------------------------------------------
-## aws_iam_role. An IAM role is an AWS Identity and Access Management (IAM) entity with permissions to make AWS service requests.
-##-----------------------------------------------------------------------------
 resource "aws_iam_role" "workspaces_default" {
   count              = var.enabled ? 1 : 0
   name               = format("%s-workspaces-role", module.labels.id)
   assume_role_policy = var.custom_assume_role_policy != null ? var.custom_assume_role_policy : data.aws_iam_policy_document.workspaces.json
 }
 
-##-----------------------------------------------------------------------------
-## aws_iam_role_policy_attachment Attaches a Managed IAM Policy to an IAM role.
-##-----------------------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "workspaces_default_service_access" {
   count      = var.enabled ? 1 : 0
   role       = join("", aws_iam_role.workspaces_default[*].name)
@@ -189,10 +235,8 @@ resource "aws_iam_role_policy_attachment" "workspaces_custom_s3_access" {
   policy_arn = var.custom_policy
 }
 
-#Module      : aws_workspaces_ip_group
-#Description : Provides an IP access control group in AWS WorkSpaces Service
 ##-----------------------------------------------------------------------------
-## aws_workspaces_ip_group provides an IP access control group in AWS WorkSpaces Service.
+## IP Access Control Group
 ##-----------------------------------------------------------------------------
 resource "aws_workspaces_ip_group" "ipgroup" {
   name        = format("%s-ipgroup", var.name)
