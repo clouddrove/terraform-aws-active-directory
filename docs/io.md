@@ -2,43 +2,37 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| ad\_name | The fully qualified name for the directory, such as corp.example.com | `string` | `"corp.example.com"` | no |
-| ad\_password | The password for the directory administrator or connector user. | `string` | `"xyzsf58f5fqar"` | no |
-| ad\_size | The size of the directory (Small or Large are accepted values). | `string` | `"Small"` | no |
+| ad\_password | The password for the directory administrator or connector user. | `string` | `""` | no |
 | alias | The directory type (SimpleAD, ADConnector or MicrosoftAD are accepted values). | `string` | `""` | no |
 | attributes | Additional attributes (e.g. `1`). | `list(any)` | `[]` | no |
-| change\_compute\_type | Whether WorkSpaces directory users can change the compute type (bundle) for their workspace. | `bool` | `true` | no |
-| connect\_settings | (Required for ADConnector) Connector related information about the directory. Fields documented below. | `map(string)` | `{}` | no |
+| create\_ssm\_parameter | If true, deploy the SSM parameter Active Directory. | `bool` | `false` | no |
+| custom\_assume\_role\_policy | Optional custom assume role policy for WorkSpaces role | `string` | `null` | no |
 | custom\_policy | Custom policy ARN | `string` | `""` | no |
+| customer\_dns\_ips | (Required) The DNS IP addresses of the domain to connect to. | `list(string)` | `[]` | no |
+| customer\_username | (Required) The username corresponding to the password provided. | `string` | `""` | no |
 | description | A textual description for the directory. | `string` | `"Default Active Directory"` | no |
-| device\_type\_android | Indicates whether users can use Android devices to access their WorkSpaces. | `string` | `"ALLOW"` | no |
-| device\_type\_chromeos | Indicates whether users can use Chromebooks to access their WorkSpaces. | `string` | `"ALLOW"` | no |
-| device\_type\_ios | Indicates whether users can use iOS devices to access their WorkSpaces. | `string` | `"ALLOW"` | no |
-| device\_type\_linux | Indicates whether users can use Linux devices to access their WorkSpaces. | `string` | `"ALLOW"` | no |
-| device\_type\_osx | Indicates whether users can use macOS clients to access their WorkSpaces. | `string` | `"ALLOW"` | no |
-| device\_type\_web | Indicates whether users can access their WorkSpaces through a web browser. | `string` | `"ALLOW"` | no |
-| device\_type\_windows | Indicates whether users can use Windows clients to access their WorkSpaces. | `string` | `"ALLOW"` | no |
-| device\_type\_zeroclient | Indicates whether users can use zero client devices to access their WorkSpaces. | `string` | `"ALLOW"` | no |
+| directory\_name | The fully qualified name for the directory, such as corp.example.com | `string` | `"corp.example.com"` | no |
+| directory\_size | The size of the directory (Small or Large are accepted values). Large by default. | `string` | `"Small"` | no |
+| directory\_type | The directory type (SimpleAD, ADConnector or MicrosoftAD are accepted values). | `string` | `"SimpleAD"` | no |
 | edition | The MicrosoftAD edition (Standard or Enterprise). | `string` | `"Standard"` | no |
-| enable\_internet\_access | Indicates whether internet access is enabled for your WorkSpaces. | `bool` | `false` | no |
-| enable\_maintenance\_mode | Indicates whether maintenance mode is enabled for your WorkSpaces. | `bool` | `false` | no |
 | enable\_sso | Whether to enable single-sign on for the directory. Requires alias. | `bool` | `false` | no |
 | enabled | Flag to control the module creation. | `bool` | `true` | no |
 | environment | Environment (e.g. `prod`, `dev`, `staging`). | `string` | `""` | no |
-| increase\_volume\_size | Whether WorkSpaces directory users can increase the volume size of the drives on their workspace. | `bool` | `true` | no |
-| ip\_whitelist | List of IP's to for whitelist | `list(string)` | <pre>[<br>  "51.79.69.69/32"<br>]</pre> | no |
+| ip\_group\_description | IP access control group description. | `string` | `"IP Access Control Group for environment."` | no |
+| ip\_rules | List of IP rules | <pre>list(object({<br>    source      = string<br>    description = string<br>  }))</pre> | `[]` | no |
 | label\_order | Label order, e.g. `name`,`application`. | `list(any)` | `[]` | no |
 | managedby | ManagedBy, eg 'CloudDrove' or 'AnmolNagpal'. | `string` | `"anmol@clouddrove.com"` | no |
 | name | Name  (e.g. `app` or `cluster`). | `string` | `""` | no |
-| rebuild\_workspace | Whether WorkSpaces directory users can rebuild the operating system of a workspace to its original state. | `bool` | `true` | no |
 | repository | Terraform current module repo | `string` | `"https://github.com/clouddrove/terraform-aws-active-directory"` | no |
-| restart\_workspace | Whether WorkSpaces directory users can restart their workspace. | `bool` | `true` | no |
+| self\_service\_permissions | Self-service permissions configuration. | <pre>object({<br>    change_compute_type  = bool<br>    increase_volume_size = bool<br>    rebuild_workspace    = bool<br>    restart_workspace    = bool<br>    switch_running_mode  = bool<br>  })</pre> | <pre>{<br>  "change_compute_type": true,<br>  "increase_volume_size": true,<br>  "rebuild_workspace": true,<br>  "restart_workspace": true,<br>  "switch_running_mode": true<br>}</pre> | no |
 | short\_name | The short name of the directory, such as CORP. | `string` | `"CORP"` | no |
+| ssm\_ad\_connector\_parameter\_name | ssm parameter name for microsoft AD | `string` | `"/workspace/Connector/password"` | no |
+| ssm\_parameter\_name | ssm parameter name for microsoft AD | `string` | `"/workspace/microsoft-ad/password"` | no |
 | subnet\_ids | List of subnets in VPC | `list(string)` | `null` | no |
-| switch\_running\_mode | Whether WorkSpaces directory users can switch the running mode of their workspace. | `bool` | `true` | no |
-| type | The directory type (SimpleAD, ADConnector or MicrosoftAD are accepted values). | `string` | `"SimpleAD"` | no |
-| user\_enabled\_as\_local\_administrator | Indicates whether users are local administrators of their WorkSpaces. | `bool` | `false` | no |
+| vpc\_id | default vpc | `string` | `""` | no |
 | vpc\_settings | (Required for SimpleAD and MicrosoftAD) VPC related information about the directory. Fields documented below. | `map(string)` | `{}` | no |
+| workspace\_access\_properties | Workspace access properties configuration. | <pre>object({<br>    device_type_android    = string<br>    device_type_chromeos   = string<br>    device_type_ios        = string<br>    device_type_linux      = string<br>    device_type_osx        = string<br>    device_type_web        = string<br>    device_type_windows    = string<br>    device_type_zeroclient = string<br>  })</pre> | <pre>{<br>  "device_type_android": "ALLOW",<br>  "device_type_chromeos": "ALLOW",<br>  "device_type_ios": "ALLOW",<br>  "device_type_linux": "ALLOW",<br>  "device_type_osx": "ALLOW",<br>  "device_type_web": "ALLOW",<br>  "device_type_windows": "ALLOW",<br>  "device_type_zeroclient": "ALLOW"<br>}</pre> | no |
+| workspace\_creation\_properties | Workspace creation properties configuration. | <pre>object({<br>    custom_security_group_id            = string<br>    default_ou                          = string<br>    enable_internet_access              = bool<br>    enable_maintenance_mode             = bool<br>    user_enabled_as_local_administrator = bool<br>  })</pre> | <pre>{<br>  "custom_security_group_id": "",<br>  "default_ou": "",<br>  "enable_internet_access": true,<br>  "enable_maintenance_mode": false,<br>  "user_enabled_as_local_administrator": true<br>}</pre> | no |
 
 ## Outputs
 
