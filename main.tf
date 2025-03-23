@@ -213,7 +213,7 @@ data "aws_iam_policy_document" "workspaces" {
 
 resource "aws_iam_role" "workspaces_default" {
   count              = var.enabled ? 1 : 0
-  name               = format("%s-workspaces-role", module.labels.id)
+  name               = var.workspaces_role_name
   assume_role_policy = var.custom_assume_role_policy != null ? var.custom_assume_role_policy : data.aws_iam_policy_document.workspaces.json
 }
 

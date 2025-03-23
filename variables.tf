@@ -231,6 +231,13 @@ variable "subnet_ids" {
   description = "List of subnets in VPC"
 }
 
+# This must be set to "workspaces_DefaultRole" as AWS WorkSpaces requires this exact name.
+variable "workspaces_role_name" {
+  description = "The name of the IAM role for AWS WorkSpaces. It must be 'workspaces_DefaultRole' to meet AWS requirements."
+  type        = string
+  default     = "workspaces_DefaultRole"
+}
+
 variable "custom_assume_role_policy" {
   description = "Optional custom assume role policy for WorkSpaces role"
   type        = string
