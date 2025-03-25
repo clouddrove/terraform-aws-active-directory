@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2025-03-25
+### :sparkles: New Features
+- [`386ed75`](https://github.com/clouddrove/terraform-aws-active-directory/commit/386ed7506696ba4543e1bd81873f1bbab140e4a9) - workspace default role name update with variable *(PR [#28](https://github.com/clouddrove/terraform-aws-active-directory/pull/28) by [@themaniskshah](https://github.com/themaniskshah))*
+
+### :memo: Documentation Changes
+- [`5e880ed`](https://github.com/clouddrove/terraform-aws-active-directory/commit/5e880ed9828b9857c7d4d5da2a638c8bdee5349c) - update CHANGELOG.md for 1.0.2 *(commit by [@clouddrove-ci](https://github.com/clouddrove-ci))*
+
+
 ## [1.0.2] - 2025-03-21
 ### :sparkles: New Features
 - [`8703895`](https://github.com/clouddrove/terraform-aws-active-directory/commit/8703895e46c97b294f1e46cc76438a593dd62963) - add automerge for dependabot PRs *(PR [#19](https://github.com/clouddrove/terraform-aws-active-directory/pull/19) by [@nileshgadgi](https://github.com/nileshgadgi))*
@@ -38,3 +46,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.15.1]: https://github.com/clouddrove/terraform-aws-active-directory/compare/0.15.1...master
 [1.0.1]:  https://github.com/clouddrove/terraform-aws-active-directory/compare/1.0.1...master
 [1.0.2]: https://github.com/clouddrove/terraform-aws-active-directory/compare/1.0.1...1.0.2
+[1.0.3]: https://github.com/clouddrove/terraform-aws-active-directory/compare/1.0.2...1.0.3
