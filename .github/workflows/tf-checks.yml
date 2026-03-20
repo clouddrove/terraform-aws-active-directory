@@ -9,11 +9,14 @@ jobs:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
     with:
       working_directory: './examples/AD-Connector/'
+      provider: none
   Microsoft-AD:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
     with:
       working_directory: './examples/Microsoft-AD/'
+      provider: none
   Simple-AD:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
     with:
       working_directory: './examples/Simple-AD/'
+      provider: none
